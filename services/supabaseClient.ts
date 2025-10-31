@@ -1,22 +1,19 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-// --- CONECTA AO BANCO REAL (VIA VARIÁVEIS DE AMBIENTE) ---
-// As variáveis são lidas automaticamente da Vercel (.env configurado lá)
+// Lê variáveis do ambiente (.env da Vercel)
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Verifica se as variáveis existem
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
-// Verifica se as variáveis estão configuradas
-export const isSupabaseConfigured =
-  !!SUPABASE_URL && !!SUPABASE_ANON_KEY;
-
-// Inicializa o cliente Supabase
+// Cria o cliente do Supabase (ou null se estiver em modo demo)
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+  : null
 
 if (isSupabaseConfigured && supabase) {
-  console.log("✅ Conectado ao Supabase com sucesso!");
+  console.log('✅ Supabase conectado com sucesso!')
 } else {
-  console.warn("⚠️ Rodando em modo de demonstração: as variáveis não foram encontradas.");
+  console.warn('⚠️ Rodando em modo de demonstração — as variáveis não foram encontradas.')
 }
