@@ -258,6 +258,50 @@ const supabaseApi = {
 
 const apiToExport = isSupabaseConfigured ? supabaseApi : mockApi;
 
+// --- LOGIN E AUTENTICAÇÃO SIMPLES ---
+
+export const loginUser = async (email: string, password: string): Promise<User | null> => {
+    if (!isSupabaseConfigured || !supabase) {
+        console.warn("⚠️ Supabase não configurado, login desativado.");
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .eq('password', password)
+        .single();
+
+    if (error) {
+        console.error("Erro ao fazer login:", error.message);
+        return null;
+    }
+
+    return data as User;
+};
+
+export const registerUser = async (email: string, password: string, role: string = 'user'): Promise<User | null> => {
+    if (!isSupabaseConfigured || !supabase) {
+        console.warn("⚠️ Supabase não configurado, registro desativado.");
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .insert([{ email, password, role }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Erro ao registrar usuário:", error.message);
+        return null;
+    }
+
+    return data as User;
+};
+
+
 export const {
     getCustomers,
     saveCustomer,
